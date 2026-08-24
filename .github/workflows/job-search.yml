@@ -1,1 +1,39 @@
+name: Daily Job Search
 
+on:
+  schedule:
+    - cron: '0 13 * * 1-5'   # 13:00 UTC = 9:00 AM Toronto during EDT
+  workflow_dispatch:          # adds a "Run workflow" button for testing
+
+permissions:
+  issues: write
+
+jobs:
+  create-checklist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const titles = [
+              "Data Engineer",
+              "Junior Data Engineer",
+              "ETL Developer",
+              "ETL Engineer",
+              "Python Data Engineer",
+              "Data Pipeline Developer",
+              "Analytics Engineer"
+            ];
+            const enc = t => encodeURIComponent(t);
+            const lines = titles.map(t =>
+              `- [ ] **${t}** — ` +
+              `[Indeed](https://ca.indeed.com/jobs?q=${enc(t)}&l=Toronto%2C+ON&fromage=1) · ` +
+              `[LinkedIn](https://www.linkedin.com/jobs/search/?keywords=${enc(t)}&location=Toronto&f_TPR=r86400)`
+            ).join('\n');
+            const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Job search — ${today}`,
+              body: `Postings from the last 24 hours:\n\n${lines}\n\n---\n**Applied today:**\n\n**Notes:**\n`
+            });
