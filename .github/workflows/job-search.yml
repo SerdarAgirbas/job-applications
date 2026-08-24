@@ -30,8 +30,7 @@ jobs:
               `  [Indeed](https://ca.indeed.com/jobs?q=${enc(t)}&l=Toronto%2C+ON&fromage=1) · ` +
               `[LinkedIn](https://www.linkedin.com/jobs/search/?keywords=${enc(t)}&location=Toronto&f_TPR=r86400) · ` +
               `[Eluta](https://www.eluta.ca/search?q=${enc(t)}&l=Toronto%2C+ON) · ` +
-              `[HiringCafe](https://hiring.cafe/?searchQuery=${enc(t)}) · ` +
-              `[LinkUp](https://www.linkup.com/search?keyword=${enc(t)}&location=Toronto%2C+ON)`
+              `[HiringCafe](https://hiring.cafe/?searchQuery=${enc(t)})`
             ).join('\n');
             const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
             await github.rest.issues.create({
