@@ -34,6 +34,7 @@ jobs:
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
+              assignees: [context.repo.owner],
               title: `Job search — ${today}`,
               body: `Postings from the last 24 hours:\n\n${lines}\n\n---\n**Applied today:**\n\n**Notes:**\n`
             });
