@@ -2,8 +2,8 @@ name: Daily Job Search
 
 on:
   schedule:
-    - cron: '0 13 * * 1-5'   # 13:00 UTC = 9:00 AM Toronto during EDT
-  workflow_dispatch:          # adds a "Run workflow" button for testing
+    - cron: '0 13 * * 1-5'
+  workflow_dispatch:
 
 permissions:
   issues: write
@@ -25,12 +25,15 @@ jobs:
               "Analytics Engineer"
             ];
             const enc = t => encodeURIComponent(t);
-                        const lines = titles.map(t =>
+            const hcPrefix = 'https://hiringcafe.com/?searchState=%7B%22locations%22%3A%5B%7B%22id%22%3A%22WBc1yZQBoEtHp_8UIwX7%22%2C%22types%22%3A%5B%22locality%22%5D%2C%22address_components%22%3A%5B%7B%22long_name%22%3A%22Toronto%22%2C%22short_name%22%3A%22Toronto%22%2C%22types%22%3A%5B%22locality%22%5D%7D%2C%7B%22long_name%22%3A%22Ontario%22%2C%22short_name%22%3A%2208%22%2C%22types%22%3A%5B%22administrative_area_level_1%22%5D%7D%2C%7B%22long_name%22%3A%22Canada%22%2C%22short_name%22%3A%22CA%22%2C%22types%22%3A%5B%22country%22%5D%7D%5D%2C%22geometry%22%3A%7B%22location%22%3A%7B%22lat%22%3A43.70643%2C%22lon%22%3A-79.39864%7D%7D%2C%22formatted_address%22%3A%22Toronto%2C+Ontario%2C+CA%22%2C%22population%22%3A2600000%2C%22workplace_types%22%3A%5B%5D%2C%22options%22%3A%7B%22radius%22%3A50%2C%22radius_unit%22%3A%22miles%22%2C%22ignore_radius%22%3Afalse%7D%7D%5D%2C%22searchQuery%22%3A%22';
+            const hcSuffix = '%22%7D';
+            const hc = t => hcPrefix + t.replace(/ /g, '+') + hcSuffix;
+            const lines = titles.map(t =>
               `- [ ] **${t}**\n` +
               `  [Indeed](https://ca.indeed.com/jobs?q=${enc(t)}&l=Toronto%2C+ON&fromage=1) · ` +
               `[LinkedIn](https://www.linkedin.com/jobs/search/?keywords=${enc(t)}&location=Toronto&f_TPR=r86400) · ` +
               `[Eluta](https://www.eluta.ca/search?q=${enc(t)}&l=Toronto%2C+ON) · ` +
-              `[HiringCafe](https://hiring.cafe/?searchQuery=${enc(t)})`
+              `[HiringCafe](${hc(t)})`
             ).join('\n');
             const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
             await github.rest.issues.create({
